@@ -1,5 +1,32 @@
 from flask import Flask, render_template, request, send_file
 from pytube import YouTube
+import atexit
+import os
+import glob
+
+# For scheduling the deletion of mp4 files from the server.
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+
+# Function to delete all mp4's from server
+def delete_mp4():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    for mp4 in glob.iglob(os.path.join(dir_path, "*.mp4")):
+        os.remove(mp4)
+
+# Schedule deletion of files from server
+scheduler = BackgroundScheduler()
+scheduler.start()
+scheduler.add_job(
+        func=delete_mp4,
+        trigger=IntervalTrigger(minutes=10),
+        id="deletion_job",
+        name="Deletes all mp4's from the server every 10 minutes.",
+        replace_existing=True
+        )
+
+# Shut down scheduler when exiting the server
+atexit.register(lambda: scheduler.shutdown())
 
 app = Flask(__name__)
 
@@ -41,5 +68,11 @@ def download():
         return render_template("error.html")
 
 if __name__ == "__main__":
+    # Clears the .mp4 files at startup
+    delete_mp4()
+
+    # Sets up the downloader
     d = Downloader()
+
+    # Runs the server
     app.run(debug = True)
