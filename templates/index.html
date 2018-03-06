@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- TODO: Replace with Flask structure in prod 
+    <link rel="stylesheet" href="../static/css/style.css" type="text/css" charset="utf-8">
+    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>YouTube Downloader</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>YouTube Downloader</h1>
+
+        <form method="POST" accept-charset="utf-8">
+          <input type="url" name="iurl" placeholder="YouTube URL..." class="input_field" required/>
+          <input type="submit" class="button" />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
