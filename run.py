@@ -67,7 +67,6 @@ def download():
     else:
         return render_template("error.html")
 
-"""
 if __name__ == "__main__":
     # Clears the .mp4 files at startup
     delete_mp4()
@@ -77,4 +76,3 @@ if __name__ == "__main__":
 
     # Runs the server
     app.run()
-"""
