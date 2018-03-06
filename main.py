@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from pytube import YouTube
 
 app = Flask(__name__)
@@ -20,7 +20,11 @@ class Downloader(object):
         yt_resolutions = yt_filtered.order_by("resolution")
 
         # Downloads the first video that fits the description
-        yt_resolutions.desc().first().download()
+        video = yt_resolutions.desc().first()
+        video.download()
+
+        # Returns the filename
+        return video.default_filename
 
 
 @app.route("/")
@@ -32,12 +36,11 @@ def download():
     if request.method == "POST" and "iurl" in request.form:
         url = request.form["iurl"]
         title = d.get_title(url)
-        d.download_video(url)
 
-        if title:
-            return render_template("download.html", title=title)
-        else:
-            return render_template("download.html")
+        # Downloads video and gets filename
+        filename = d.download_video(url)
+
+        return send_file(filename, as_attachment=True)
 
     else:
         return render_template("error.html")
