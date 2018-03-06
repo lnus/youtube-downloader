@@ -8,11 +8,6 @@ class Downloader(object):
     def __init__(self):
         print("Downloader loaded successfully!")
 
-    def get_title(self, url):
-        """Gets the title of the video on the passed URL"""
-        yt = YouTube(url)
-        return yt.title
-
     def download_video(self, url):
         """Downloads the video entered in the field."""
         yt = YouTube(url)
@@ -35,11 +30,11 @@ def index():
 def download():
     if request.method == "POST" and "iurl" in request.form:
         url = request.form["iurl"]
-        title = d.get_title(url)
 
         # Downloads video and gets filename
         filename = d.download_video(url)
 
+        # Serves user the file
         return send_file(filename, as_attachment=True)
 
     else:
