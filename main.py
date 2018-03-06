@@ -8,24 +8,40 @@ class Downloader(object):
     def __init__(self):
         print("Downloader loaded successfully!")
 
+    def get_title(self, url):
+        """Gets the title of the video on the passed URL"""
+        yt = YouTube(url)
+        return yt.title
+
     def download_video(self, url):
         """Downloads the video entered in the field."""
         yt = YouTube(url)
         yt_filtered = yt.streams.filter(progressive=True, file_extension="mp4")
         yt_resolutions = yt_filtered.order_by("resolution")
 
-# Downloads the first video that fits the description
+        # Downloads the first video that fits the description
         yt_resolutions.desc().first().download()
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
+    return render_template("index.html")
+
+@app.route("/download", methods=["GET", "POST"])
+def download():
     if request.method == "POST" and "iurl" in request.form:
         url = request.form["iurl"]
+        title = d.get_title(url)
         d.download_video(url)
 
-    return render_template("index.html")
+        if title:
+            return render_template("download.html", title=title)
+        else:
+            return render_template("download.html")
+
+    else:
+        return render_template("error.html")
 
 if __name__ == "__main__":
     d = Downloader()
-    app.run()
+    app.run(debug = True)
