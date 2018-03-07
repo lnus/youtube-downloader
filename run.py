@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, send_file
 from pytube import YouTube
+import datetime
 import atexit
 import os
 import glob
@@ -8,8 +9,13 @@ import glob
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
+def timestamp():
+    timestamp = str(datetime.datetime.now()).split(".")[0]
+    return timestamp
+
 # Function to delete all mp4's from server
 def delete_mp4():
+    print("[{}] Removed mp4's.".format(timestamp()))
     dir_path = os.path.dirname(os.path.realpath(__file__))
     for mp4 in glob.iglob(os.path.join(dir_path, "*.mp4")):
         os.remove(mp4)
@@ -33,7 +39,7 @@ app = Flask(__name__)
 class Downloader(object):
     """Downloads the files and serves them to the user"""
     def __init__(self):
-        print("Downloader loaded successfully!")
+        print("[{}] Downloader loaded successfully!".format(timestamp()))
 
     def download_video(self, url):
         """Downloads the video entered in the field."""
