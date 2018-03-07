@@ -15,17 +15,21 @@ def timestamp():
 
 # Function to delete all mp4's from server
 def delete_mp4():
-    print("[{}] Removed mp4's.".format(timestamp()))
+    print("[{}] Removing MP4 files.".format(timestamp()))
     dir_path = os.path.dirname(os.path.realpath(__file__))
     for mp4 in glob.iglob(os.path.join(dir_path, "*.mp4")):
-        os.remove(mp4)
+        try:
+            os.remove(mp4)
+        except:
+            print("[{}] File: {}; failed to removed because it's being used.".format(timestamp(),
+                mp4.split("\\")[-1]))
 
 # Schedule deletion of files from server
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduler.add_job(
         func=delete_mp4,
-        trigger=IntervalTrigger(minutes=10),
+        trigger=IntervalTrigger(minutes=1),
         id="deletion_job",
         name="Deletes all mp4's from the server every 10 minutes.",
         replace_existing=True
@@ -81,4 +85,4 @@ if __name__ == "__main__":
     d = Downloader()
 
     # Runs the server
-    app.run()
+    app.run(host="0.0.0.0")
